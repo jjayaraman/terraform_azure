@@ -96,7 +96,6 @@ jobs:
           enable-AzPSSession: false
           environment: azurecloud
           audience: api://AzureADTokenExchange
-          auth-type: OIDC
 
       # Generates an execution plan for Terraform
       - name: Terraform Plan
