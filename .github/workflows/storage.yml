@@ -89,7 +89,7 @@ jobs:
       - name: Azure Login
         uses: azure/login@v2
         with:
-          subscription-id: 1d3001e0-9d8a-41d2-b92e-beb722fbe2e8
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           # client-secret: ${{ secrets.AZURE_CLIENT_SECRET }} # Needed for service principal
