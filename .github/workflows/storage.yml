@@ -92,10 +92,12 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }} # Needed for service principal
           allow-no-subscriptions: true
           enable-AzPSSession: false
           environment: azurecloud
           audience: api://AzureADTokenExchange
+          auth-type: SERVICE_PRINCIPAL
 
       # Generates an execution plan for Terraform
       - name: Terraform Plan
