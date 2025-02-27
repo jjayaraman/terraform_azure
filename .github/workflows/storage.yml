@@ -102,10 +102,10 @@ jobs:
       - name: Azure Login using Service Principal (v1)
         uses: azure/login@v1
         with:
-          creds: ${{ secrets.AZURE_SERVICE_PRINCIPAL_CREDENTIALS }} # Secret containing client-id, client-secret, and tenant-id
-          # client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          # client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
-          # tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          # creds: ${{ secrets.AZURE_SERVICE_PRINCIPAL_CREDENTIALS }} # Secret containing client-id, client-secret, and tenant-id
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           environment: azurecloud
           auth-type: 'SERVICE_PRINCIPAL' # Ensure you're using Service Principal
