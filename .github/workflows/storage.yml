@@ -86,18 +86,28 @@ jobs:
         working-directory: ./storage
 
       # Azure Login
-      - name: Azure Login
-        uses: azure/login@v2
+      # - name: Azure Login
+      #   uses: azure/login@v2
+      #   with:
+      #     subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      #     tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+      #     client-id: ${{ secrets.AZURE_CLIENT_ID }}
+      #     client-secret: ${{ secrets.AZURE_CLIENT_SECRET }} # Needed for service principal
+      #     allow-no-subscriptions: true
+      #     enable-AzPSSession: false
+      #     environment: azurecloud
+      #     audience: api://AzureADTokenExchange
+      #     auth-type: SERVICE_PRINCIPAL
+
+      - name: Azure Login using Service Principal (v1)
+        uses: azure/login@v1
         with:
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }} # Needed for service principal
-          allow-no-subscriptions: true
-          enable-AzPSSession: false
+          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           environment: azurecloud
-          audience: api://AzureADTokenExchange
-          auth-type: SERVICE_PRINCIPAL
+          auth-type: 'ServicePrincipal' # Ensure you're using Service Principal
 
       # Generates an execution plan for Terraform
       - name: Terraform Plan
