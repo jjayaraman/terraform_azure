@@ -81,7 +81,7 @@ jobs:
 
       # Checks that all Terraform configuration files adhere to a canonical format
       - name: Terraform Format
-        run: terraform fmt -check -var-file="dev.tfvars"
+        run: terraform fmt -check
         working-directory: ./storage
 
       # Generates an execution plan for Terraform
