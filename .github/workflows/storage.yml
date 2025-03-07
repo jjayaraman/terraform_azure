@@ -97,6 +97,13 @@ jobs:
           enable-AzPSSession: false
           environment: azurecloud
           audience: api://AzureADTokenExchange
+      
+      - name: Azure CLI script
+        uses: azure/cli@v2
+        with:
+          azcliversion: latest
+          inlineScript: |
+            az account show
 
       # - name: Azure Login using Service Principal (v1)
       #   uses: azure/login@v1
