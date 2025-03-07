@@ -120,3 +120,7 @@ jobs:
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -var-file="dev.tfvars" -auto-approve -input=false
         working-directory: ./storage
+
+      - name: Debug GitHub Context
+        run: |
+          echo "Branch: ${github.ref}, Event: ${github.event_name}"
