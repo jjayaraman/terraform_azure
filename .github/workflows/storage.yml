@@ -123,4 +123,4 @@ jobs:
 
       - name: Debug GitHub Context
         run: |
-          echo "Branch: ${github.ref}, Event: ${github.event_name}"
+          echo "Branch: ${{ github.ref }}, Event: ${{ github.event_name }}"
