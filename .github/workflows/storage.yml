@@ -29,6 +29,7 @@ env:
   DEPLOY_ENV: ${{ github.event.inputs.environment || 'dev' }} # Default to dev for push
   BC_resource_group: terraform_rg # parameterise
   BC_storage_account_name: sttfstate2025dev # parameterise
+  BC_storage_key: ${{ github.workflow }}-terraform.tfstate # parameterise
 
 jobs:
   terraform:
@@ -64,14 +65,13 @@ jobs:
         run: az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Terraform Init
-        # run: terraform init -backend-config=${{ env.DEPLOY_ENV }}-backend.config --upgrade
         run: |
           terraform init \
-          -backend-config="subscription_id=${TF_VAR_subscription_id}" \
-          -backend-config="resource_group_name=${BC_resource_group}" \
-          -backend-config="storage_account_name=${BC_storage_account_name}" \
-          -backend-config="container_name=tfstate" \
-          -backend-config="key=terraform.tfstate"
+            -backend-config="subscription_id=${{ secrets.TF_VAR_subscription_id }}" \
+            -backend-config="resource_group_name=${{ env.BC_resource_group }}" \
+            -backend-config="storage_account_name=${{ env.BC_storage_account_name }}" \
+            -backend-config="container_name=tfstate" \
+            -backend-config="key=${{ github.workflow }}-${{ env.DEPLOY_ENV }}-terraform.tfstate"
         working-directory: ./storage
 
       - name: Terraform Format
