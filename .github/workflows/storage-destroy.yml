@@ -1,13 +1,32 @@
 name: 'storage-destroy'
 
 on:
+  # push:
+  #   branches: ['feature/poc']
   workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Select an Environment'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - sit
+          - uat
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
 jobs:
   terraform-destroy:
     name: 'Terraform Destroy'
     runs-on: ubuntu-latest
-    environment: development
+    environment: ${{ github.event.inputs.environment }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -18,9 +37,35 @@ jobs:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
       - name: Terraform Init
-        run: terraform init -upgrade -var-file="dev.tfvars"
+        run: terraform init -upgrade
+        working-directory: ./storage
+
+      # Azure Login
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          allow-no-subscriptions: true
+          enable-AzPSSession: false
+          environment: azurecloud
+          audience: api://AzureADTokenExchange
+
+      # Set Azure subscription
+      - name: Set Azure Subscription
+        run: |
+          echo "Set Azure Subscription"
+          az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Terraform Plan
+        run: |
+          echo "Terraform plan for ${{ github.event.inputs.environment }}"
+          terraform plan -var-file="${{ github.event.inputs.environment }}.tfvars" -input=false
         working-directory: ./storage
 
       - name: Terraform Destroy
-        run: terraform destroy -var-file="dev.tfvars" -auto-approve
+        run: |
+          echo "Terraform destroy for ${{ github.event.inputs.environment }}"
+          terraform destroy -var-file="${{ github.event.inputs.environment }}.tfvars" -auto-approve -input=false
         working-directory: ./storage
