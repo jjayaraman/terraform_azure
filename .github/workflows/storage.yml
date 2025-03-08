@@ -45,9 +45,9 @@
 name: 'storage'
 
 on:
-  push:
-    branches: ['feature/poc']
-  pull_request:
+  # push:
+  #   branches: ['feature/poc']
+  workflow_dispatch:
 
 permissions:
   id-token: write
