@@ -20,13 +20,13 @@ permissions:
 
 env:
   TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-  DEPLOY_ENV: ${{ github.event.inputs.environment || 'dev' }} # Default to dev for push
+  DEPLOY_ENV: ${{ github.event.inputs.environment }}
 
 jobs:
   terraform-destroy:
     name: 'Terraform Destroy'
     runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.environment || 'dev' }}
+    environment: ${{ github.event.inputs.environment }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
