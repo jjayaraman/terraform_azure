@@ -8,7 +8,6 @@ on:
   # push:
   #   branches:
   #     - main # Trigger on push to main after PR merge (Terraform apply)
-
   workflow_dispatch:
     inputs:
       environment:
