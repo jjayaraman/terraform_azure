@@ -84,7 +84,7 @@ jobs:
           echo "Github: ${{ github }}"
           echo "Environment: ${{ github.event.inputs.environment }}"
           echo "Event Name: ${{ github.event_name }}"
-          echo "s: ${{ secrets.AZURE_SUBSCRIPTION_ID }}"
+          echo "s:  ${{ secrets.AZURE_SUBSCRIPTION_ID }}"
 
       # Checkout the repository to the GitHub Actions runner
       - name: Checkout
