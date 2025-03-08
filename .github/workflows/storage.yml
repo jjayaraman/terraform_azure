@@ -45,8 +45,8 @@
 name: 'storage'
 
 on:
-  # push:
-  #   branches: ['feature/poc']
+  push:
+    branches: ['feature/poc']
   workflow_dispatch:
     inputs:
       environment:
