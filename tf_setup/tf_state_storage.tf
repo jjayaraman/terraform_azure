@@ -12,9 +12,15 @@ resource "azurerm_storage_account" "tf_state_storage" {
   account_replication_type = "LRS"
 }
 
-resource "azurerm_storage_account_network_rules" "storagetf_state_storage_rules" {
-  storage_account_id = azurerm_storage_account.tf_state_storage.id
-
-  default_action = "Deny"           # Deny all traffic except allowed IPs
-  ip_rules       = ["4.148.0.0/16"] # Allow only Github actions
+resource "azurerm_storage_container" "tf_state_storage_container" {
+  name                  = "tfstate"
+  storage_account_id    = azurerm_storage_account.tf_state_storage.id
+  container_access_type = "private"
 }
+
+# resource "azurerm_storage_account_network_rules" "storagetf_state_storage_rules" {
+#   storage_account_id = azurerm_storage_account.tf_state_storage.id
+
+#   default_action = "Deny"           # Deny all traffic except allowed IPs
+#   ip_rules       = ["4.148.0.0/16"] # Allow only Github actions
+# }
