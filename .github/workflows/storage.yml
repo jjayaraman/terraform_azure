@@ -1,4 +1,4 @@
-# Workflow to creare storage account
+# Workflow to creare storage  account
 name: 'storage'
 
 on:
