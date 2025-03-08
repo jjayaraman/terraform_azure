@@ -1,4 +1,3 @@
-# Workflow to creare storage account
 name: 'storage'
 
 on:
@@ -23,47 +22,36 @@ permissions:
 
 env:
   TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-  environment: ${{ github.event.inputs.environment || 'dev' }} # Default to dev for auto deployment
+  DEPLOY_ENV: ${{ github.event.inputs.environment || 'dev' }} # Default to dev for push
 
 jobs:
   terraform:
     name: 'Terraform'
     runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.environment }}
-
-    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
-    defaults:
-      run:
-        shell: bash
+    environment: ${{ github.event.inputs.environment || 'dev' }}
 
     steps:
-      # Set Azure subscription
       - name: Debug
         run: |
           echo "Github: ${{ toJson(github) }}"
-          echo "Environment: ${{ github.event.inputs.environment }}"
+          echo "Environment: ${{ env.DEPLOY_ENV }}"
           echo "Event Name: ${{ github.event_name }}"
           echo "s:  ${{ secrets.AZURE_SUBSCRIPTION_ID }}"
 
-      # Checkout the repository to the GitHub Actions runner
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Install the latest version of Terraform CLI
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
 
-      # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
       - name: Terraform Init
         run: terraform init -upgrade
         working-directory: ./storage
 
-      # Checks that all Terraform configuration files adhere to a canonical format
       - name: Terraform Format
         run: terraform fmt -check
         working-directory: ./storage
 
-      # Azure Login
       - name: Azure Login
         uses: azure/login@v2
         with:
@@ -75,29 +63,22 @@ jobs:
           environment: azurecloud
           audience: api://AzureADTokenExchange
 
-      # Set Azure subscription
       - name: Set Azure Subscription
-        run: |
-          echo "Set Azure Subscription"
-          az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        run: az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Azure CLI script
         uses: azure/cli@v2
         with:
           azcliversion: latest
-          inlineScript: |
-            az account show
+          inlineScript: az account show
 
-      # Generates an execution plan for Terraform
       - name: Terraform Plan
         working-directory: ./storage
         env:
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-        run: terraform plan -var-file=${{ github.event.inputs.environment }}.tfvars -input=false
+        run: terraform plan -var-file=${{ env.DEPLOY_ENV }}.tfvars -input=false
 
-        # On push to "main", build or change infrastructure according to Terraform configuration files
-        # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
       - name: Terraform Apply
         if: github.event_name == 'pull_request'
-        run: terraform apply -var-file=${{ github.event.inputs.environment }}.tfvars -auto-approve -input=false
+        run: terraform apply -var-file=${{ env.DEPLOY_ENV }}.tfvars -auto-approve -input=false
         working-directory: ./storage
