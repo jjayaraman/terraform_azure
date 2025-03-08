@@ -38,13 +38,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
-
-      - name: Terraform Init
-        run: terraform init -upgrade
-        working-directory: ./tf_setup
-
       - name: Azure Login
         uses: azure/login@v2
         with:
@@ -58,6 +51,13 @@ jobs:
 
       - name: Set Azure Subscription
         run: az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+
+      - name: Terraform Init
+        run: terraform init -upgrade
+        working-directory: ./tf_setup
 
       - name: Terraform Plan
         working-directory: ./tf_setup
