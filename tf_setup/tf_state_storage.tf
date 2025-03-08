@@ -1,12 +1,13 @@
-resource "azurerm_resource_group" "rg_name" {
+resource "azurerm_resource_group" "tf_state_rg" {
+  count    = length(data.azurerm_resource_group.tf_state_rg_existing.name) > 0 ? 0 : 1 // if resource group does not exist create
   name     = var.resource_group_name
   location = var.resource_group_location
 }
 
 resource "azurerm_storage_account" "tf_state_storage" {
   name                     = "${var.storage_name_prefix}${var.environment}"
-  resource_group_name      = azurerm_resource_group.rg_name.name
-  location                 = azurerm_resource_group.rg_name.location
+  resource_group_name      = azurerm_resource_group.tf_state_rg.name
+  location                 = azurerm_resource_group.tf_state_rg.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
 }
