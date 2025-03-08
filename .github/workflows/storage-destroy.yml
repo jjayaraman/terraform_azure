@@ -36,16 +36,6 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
 
-      - name: Terraform Init
-        run: |
-          terraform init \
-            -backend-config="subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }}" \
-            -backend-config="resource_group_name=${{ env.BC_resource_group }}" \
-            -backend-config="storage_account_name=${{ env.BC_storage_account_name }}" \
-            -backend-config="container_name=tfstate" \
-            -backend-config="key=storage-${{ env.DEPLOY_ENV }}-terraform.tfstate"
-        working-directory: ./storage
-
       # Azure Login
       - name: Azure Login
         uses: azure/login@v2
@@ -63,6 +53,16 @@ jobs:
         run: |
           echo "Set Azure Subscription"
           az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Terraform Init
+        run: |
+          terraform init \
+            -backend-config="subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }}" \
+            -backend-config="resource_group_name=${{ env.BC_resource_group }}" \
+            -backend-config="storage_account_name=${{ env.BC_storage_account_name }}" \
+            -backend-config="container_name=tfstate" \
+            -backend-config="key=storage-${{ env.DEPLOY_ENV }}-terraform.tfstate"
+        working-directory: ./storage
 
       - name: Terraform Plan
         run: |
