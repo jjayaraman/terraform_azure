@@ -52,7 +52,7 @@ jobs:
         run: terraform version
 
       - name: Terraform Init
-        run: terraform init -upgrade
+        run: terraform init -backend-config=${{ env.DEPLOY_ENV }}-backend.config --upgrade
         working-directory: ./storage
 
       - name: Terraform Format
