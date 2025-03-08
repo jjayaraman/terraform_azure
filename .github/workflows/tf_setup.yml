@@ -1,0 +1,69 @@
+# To create Terraform state storage account
+name: 'tf_setup'
+
+on:
+  pull_request:
+    branches:
+      - main # Trigger on PR to main branch (PR validation)
+  push:
+    branches:
+      - main # Trigger on push to main after PR merge (Terraform apply)
+
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Select an Environment'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - sit
+          - uat
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  DEPLOY_ENV: ${{ github.event.inputs.environment || 'dev' }} # Default to dev for push
+
+jobs:
+  terraform:
+    name: 'Terraform'
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment || 'dev' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+
+      - name: Terraform Init
+        run: terraform init -upgrade
+        working-directory: ./tf_setup
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          allow-no-subscriptions: true
+          enable-AzPSSession: false
+          environment: azurecloud
+          audience: api://AzureADTokenExchange
+
+      - name: Set Azure Subscription
+        run: az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Terraform Plan
+        working-directory: ./tf_setup
+        run: terraform plan -var-file=${{ env.DEPLOY_ENV }}.tfvars -input=false
+
+      - name: Terraform Apply
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: terraform apply -var-file=${{ env.DEPLOY_ENV }}.tfvars -auto-approve -input=false
+        working-directory: ./tf_setup
