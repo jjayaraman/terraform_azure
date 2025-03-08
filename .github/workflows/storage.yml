@@ -67,7 +67,7 @@ jobs:
       - name: Terraform Init
         run: |
           terraform init \
-            -backend-config="subscription_id=${{ secrets.TF_VAR_subscription_id }}" \
+            -backend-config="subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }}" \
             -backend-config="resource_group_name=${{ env.BC_resource_group }}" \
             -backend-config="storage_account_name=${{ env.BC_storage_account_name }}" \
             -backend-config="container_name=tfstate" \
