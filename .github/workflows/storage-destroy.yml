@@ -5,6 +5,10 @@ on:
     branches: ['feature/poc']
   workflow_dispatch:
 
+permissions:
+  id-token: write
+  contents: read
+
 env:
   TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
@@ -37,6 +41,7 @@ jobs:
           enable-AzPSSession: false
           environment: azurecloud
           audience: api://AzureADTokenExchange
+          # auth-type: oidc
 
       - name: Terraform Plan
         run: terraform plan -var-file="dev.tfvars" -input=false
