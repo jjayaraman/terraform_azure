@@ -6,8 +6,8 @@ resource "azurerm_resource_group" "tf_state_rg" {
 
 resource "azurerm_storage_account" "tf_state_storage" {
   name                     = "${var.storage_name_prefix}${var.environment}"
-  resource_group_name      = azurerm_resource_group.tf_state_rg[0].name
-  location                 = azurerm_resource_group.tf_state_rg[0].location
+  resource_group_name      = length(azurerm_resource_group.tf_state_rg) > 0 ? azurerm_resource_group.tf_state_rg[0].name : data.azurerm_resource_group.tf_state_rg_existing.name
+  location                 = length(azurerm_resource_group.tf_state_rg) > 0 ? azurerm_resource_group.tf_state_rg[0].location : data.azurerm_resource_group.tf_state_rg_existing.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
 }
