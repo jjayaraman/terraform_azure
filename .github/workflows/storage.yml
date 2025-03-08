@@ -1,8 +1,12 @@
 name: 'storage'
 
 on:
+  pull_request:
+    branches:
+      - main # Trigger on PR to main branch (PR validation)
   push:
-    branches: ['feature/poc']
+    branches:
+      - main # Trigger on push to main after PR merge (Terraform apply)
 
   workflow_dispatch:
     inputs:
@@ -79,6 +83,6 @@ jobs:
         run: terraform plan -var-file=${{ env.DEPLOY_ENV }}.tfvars -input=false
 
       - name: Terraform Apply
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: terraform apply -var-file=${{ env.DEPLOY_ENV }}.tfvars -auto-approve -input=false
         working-directory: ./storage
