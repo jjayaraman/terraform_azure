@@ -1,0 +1,1 @@
+for id in $(gh run list --workflow storage-destroy.yml --json databaseId --jq '.[].databaseId'); do gh run delete "$id"; done
