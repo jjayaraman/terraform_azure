@@ -1,6 +1,8 @@
 name: 'storage-destroy'
 
 on:
+  push:
+    branches: ['feature/poc']
   workflow_dispatch:
 
 env:
