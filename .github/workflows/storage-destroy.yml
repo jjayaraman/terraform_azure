@@ -61,11 +61,11 @@ jobs:
       - name: Terraform Plan
         run: |
           echo "Terraform plan for ${{ DEPLOY_ENV }}"
-          terraform plan -var-file="${{ DEPLOY_ENV }}.tfvars" -input=false
+          terraform plan -var-file=${{ DEPLOY_ENV }}.tfvars -input=false
         working-directory: ./storage
 
       - name: Terraform Destroy
         run: |
           echo "Terraform destroy for ${{ DEPLOY_ENV }}"
-          terraform destroy -var-file="${{ DEPLOY_ENV }}.tfvars" -auto-approve -input=false
+          terraform destroy -var-file=${{ DEPLOY_ENV }}.tfvars -auto-approve -input=false
         working-directory: ./storage
