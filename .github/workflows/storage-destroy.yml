@@ -1,3 +1,4 @@
+# Workflow to destroy storage account
 name: 'storage-destroy'
 
 on:
