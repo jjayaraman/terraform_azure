@@ -20,12 +20,13 @@ permissions:
 
 env:
   TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  DEPLOY_ENV: ${{ github.event.inputs.environment || 'dev' }} # Default to dev for push
 
 jobs:
   terraform-destroy:
     name: 'Terraform Destroy'
     runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.environment }}
+    environment: ${{ github.event.inputs.environment || 'dev' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -59,12 +60,12 @@ jobs:
 
       - name: Terraform Plan
         run: |
-          echo "Terraform plan for ${{ github.event.inputs.environment }}"
-          terraform plan -var-file="${{ github.event.inputs.environment }}.tfvars" -input=false
+          echo "Terraform plan for ${{ DEPLOY_ENV }}"
+          terraform plan -var-file="${{ DEPLOY_ENV }}.tfvars" -input=false
         working-directory: ./storage
 
       - name: Terraform Destroy
         run: |
-          echo "Terraform destroy for ${{ github.event.inputs.environment }}"
-          terraform destroy -var-file="${{ github.event.inputs.environment }}.tfvars" -auto-approve -input=false
+          echo "Terraform destroy for ${{ DEPLOY_ENV }}"
+          terraform destroy -var-file="${{ DEPLOY_ENV }}.tfvars" -auto-approve -input=false
         working-directory: ./storage
