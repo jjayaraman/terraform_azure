@@ -48,6 +48,16 @@ on:
   # push:
   #   branches: ['feature/poc']
   workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Select an Environment'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - sit
+          - uat
 
 permissions:
   id-token: write
@@ -60,7 +70,7 @@ jobs:
   terraform:
     name: 'Terraform'
     runs-on: ubuntu-latest
-    environment: development
+    environment: ${{ github.event.inputs.environment }}
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
@@ -80,7 +90,7 @@ jobs:
 
       # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
       - name: Terraform Init
-        run: terraform init -upgrade -var-file="dev.tfvars"
+        run: terraform init -upgrade
         working-directory: ./storage
 
       # Checks that all Terraform configuration files adhere to a canonical format
@@ -112,13 +122,13 @@ jobs:
         working-directory: ./storage
         env:
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-        run: terraform plan -var-file="dev.tfvars" -input=false
+        run: terraform plan -var-file=${{ github.event.inputs.environment }}.tfvars -input=false
 
         # On push to "main", build or change infrastructure according to Terraform configuration files
         # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
       - name: Terraform Apply
         if: github.event_name == 'pull_request'
-        run: terraform apply -var-file="dev.tfvars" -auto-approve -input=false
+        run: terraform apply -var-file=${{ github.event.inputs.environment }}.tfvars -auto-approve -input=false
         working-directory: ./storage
 
       - name: Debug GitHub Context
