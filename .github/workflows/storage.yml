@@ -1,12 +1,12 @@
 name: 'storage'
 
 on:
-  # pull_request:
-  #   branches:
-  #     - main # Trigger on PR to main branch (PR validation)
-  # push:
-  #   branches:
-  #     - main # Trigger on push to main after PR merge (Terraform apply)
+  pull_request:
+    branches:
+      - main # Trigger on PR to main branch (PR validation)
+  push:
+    branches:
+      - main # Trigger on push to main after PR merge (Terraform apply)
 
   workflow_dispatch:
     inputs:
@@ -27,9 +27,8 @@ permissions:
 env:
   TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
   DEPLOY_ENV: ${{ github.event.inputs.environment || 'dev' }} # Default to dev for push
-  BC_resource_group: terraform_rg # parameterise
-  BC_storage_account_name: sttfstate2025dev # parameterise
-  BC_storage_key: ${{ github.workflow }}-terraform.tfstate # parameterise
+  BC_resource_group: terraform_rg # TF state backend storage resource group name
+  BC_storage_account_name: sttfstate2025dev # TF state backend storage account name
 
 jobs:
   terraform:
