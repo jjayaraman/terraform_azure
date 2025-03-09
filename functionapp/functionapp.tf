@@ -11,7 +11,7 @@ resource "azurerm_storage_account" "fa_storage" {
   account_replication_type = "LRS"
 
   network_rules {
-    default_action = "Allow"           # Deny all traffic except allowed IPs
+    default_action = "Allow"           # Deny all traffic except allowed  IPs
     bypass         = ["AzureServices"] # Allows Azure services to access  
   }
 }
