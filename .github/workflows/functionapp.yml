@@ -32,7 +32,7 @@ env:
   BC_storage_account_name: sttfstate2025dev # TF state backend storage account name
 
 jobs:
-  terraform:
+  functionapp-terraform:
     name: 'Terraform'
     runs-on: ubuntu-latest
     environment: ${{ github.event.inputs.environment || 'dev' }}
