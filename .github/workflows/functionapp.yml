@@ -1,12 +1,13 @@
-name: 'storage'
+# Workflow for Function App
+name: 'functionapp'
 
 on:
   pull_request:
     paths:
-      - storage/** # Trigger on PR to main branch (PR validation)
+      - functionapp/** # Trigger on PR to main branch (PR validation)
   push:
     paths:
-      - storage/** # Trigger on push to main after PR merge (Terraform apply)
+      - functionapp/** # Trigger on push to main after PR merge (Terraform apply)
 
   workflow_dispatch:
     inputs:
@@ -35,6 +36,10 @@ jobs:
     name: 'Terraform'
     runs-on: ubuntu-latest
     environment: ${{ github.event.inputs.environment || 'dev' }}
+    defaults:
+      run:
+        shell: bash
+        working-directory: functionapp # Set the working directory for all steps
 
     steps:
       - name: Checkout
@@ -65,17 +70,13 @@ jobs:
             -backend-config="storage_account_name=${{ env.BC_storage_account_name }}" \
             -backend-config="container_name=tfstate" \
             -backend-config="key=${{ github.workflow }}-${{ env.DEPLOY_ENV }}-terraform.tfstate"
-        working-directory: ./storage
 
       - name: Terraform Format
         run: terraform fmt -check
-        working-directory: ./storage
 
       - name: Terraform Plan
-        working-directory: ./storage
         run: terraform plan -var-file=${{ env.DEPLOY_ENV }}.tfvars -input=false
 
       - name: Terraform Apply
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: terraform apply -var-file=${{ env.DEPLOY_ENV }}.tfvars -auto-approve -input=false
-        working-directory: ./storage
