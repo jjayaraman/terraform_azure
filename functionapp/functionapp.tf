@@ -25,11 +25,12 @@ resource "azurerm_service_plan" "fa_service_plan" {
 }
 
 resource "azurerm_windows_function_app" "function_app" {
-  name                 = var.functionapp_name
-  resource_group_name  = azurerm_resource_group.fa_rg.name
-  location             = azurerm_resource_group.fa_rg.location
-  service_plan_id      = azurerm_service_plan.fa_service_plan.id
-  storage_account_name = azurerm_storage_account.fa_storage.name
+  name                       = var.functionapp_name
+  resource_group_name        = azurerm_resource_group.fa_rg.name
+  location                   = azurerm_resource_group.fa_rg.location
+  service_plan_id            = azurerm_service_plan.fa_service_plan.id
+  storage_account_name       = azurerm_storage_account.fa_storage.name
+  storage_account_access_key = azurerm_storage_account.fa_storage.primary_access_key
 
   site_config {
     always_on = false
