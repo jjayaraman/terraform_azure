@@ -3,11 +3,11 @@ name: 'functionapp'
 
 on:
   pull_request:
-    branches:
-      - main # Trigger on PR to main branch (PR validation)
+    paths:
+      - functionapp/** # Trigger on PR to main branch (PR validation)
   push:
-    branches:
-      - main # Trigger on push to main after PR merge (Terraform apply)
+    paths:
+      - functionapp/** # Trigger on push to main after PR merge (Terraform apply)
 
   workflow_dispatch:
     inputs:
