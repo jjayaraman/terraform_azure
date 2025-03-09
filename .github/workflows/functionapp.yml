@@ -6,8 +6,10 @@ on:
     paths:
       - functionapp/** # Trigger on PR to main branch (PR validation)
   push:
+    branches:
+      - main # Trigger on push to main after PR merge (Terraform apply)
     paths:
-      - functionapp/** # Trigger on push to main after PR merge (Terraform apply)
+      - functionapp/** # Trigger only if there are changes in functionapp directory
 
   workflow_dispatch:
     inputs:

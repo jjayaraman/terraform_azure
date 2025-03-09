@@ -16,7 +16,7 @@ resource "azurerm_service_plan" "fa_service_plan" {
   resource_group_name = azurerm_resource_group.fa_rg.name
   location            = azurerm_resource_group.fa_rg.location
   os_type             = "Linux"
-  sku_name            = "EP1" # Elastic Premium Plan (Flex Consumption)
+  sku_name            = "Y1" # Consumption plan
 }
 
 resource "azurerm_linux_function_app" "function_app" {
