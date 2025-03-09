@@ -24,7 +24,7 @@ resource "azurerm_service_plan" "fa_service_plan" {
   sku_name            = "Y1" # Consumption plan
 }
 
-resource "azurerm_linux_function_app" "function_app" {
+resource "azurerm_windows_function_app" "function_app" {
   name                 = var.functionapp_name
   resource_group_name  = azurerm_resource_group.fa_rg.name
   location             = azurerm_resource_group.fa_rg.location
@@ -32,7 +32,7 @@ resource "azurerm_linux_function_app" "function_app" {
   storage_account_name = azurerm_storage_account.fa_storage.name
 
   site_config {
-    always_on = false # Recommended for Flex Consumption
+    always_on = false
     application_stack {
       node_version = "18" # Node.js version
     }
@@ -49,12 +49,12 @@ resource "azurerm_linux_function_app" "function_app" {
 
 # 🔹 Assign Storage Blob Data Contributor access to Function app
 resource "azurerm_role_assignment" "function_app_fa_storage_access" {
-  principal_id         = azurerm_linux_function_app.function_app.identity[0].principal_id
+  principal_id         = azurerm_windows_function_app.function_app.identity[0].principal_id
   scope                = azurerm_storage_account.fa_storage.id
   role_definition_name = "Storage Blob Data Contributor"
 }
 
 # 🔹 Output Function App URL
 output "function_app_url" {
-  value = azurerm_linux_function_app.function_app.default_hostname
+  value = azurerm_windows_function_app.function_app.default_hostname
 }
