@@ -17,8 +17,8 @@ on:
         type: choice
         options:
           - dev
-          - sit
-          - uat
+          # - sit
+          # - uat
 
 permissions:
   id-token: write
