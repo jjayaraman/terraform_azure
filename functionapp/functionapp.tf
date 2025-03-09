@@ -9,6 +9,11 @@ resource "azurerm_storage_account" "fa_storage" {
   location                 = azurerm_resource_group.fa_rg.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
+
+  # network_rules {
+  #   default_action = "Deny"            # Deny all traffic except allowed IPs
+  #   bypass         = ["AzureServices"] # Allows Azure services to access  
+  # }
 }
 
 resource "azurerm_service_plan" "fa_service_plan" {
@@ -43,6 +48,13 @@ resource "azurerm_linux_function_app" "function_app" {
   identity {
     type = "SystemAssigned" # Managed Identity
   }
+}
+
+# 🔹 Assign Storage Blob Data Contributor access to Function app
+resource "azurerm_role_assignment" "function_app_fa_storage_access" {
+  principal_id         = azurerm_linux_function_app.function_app.identity[0].principal_id
+  scope                = azurerm_storage_account.fa_storage.id
+  role_definition_name = "Storage Blob Data Contributor"
 }
 
 # 🔹 Output Function App URL

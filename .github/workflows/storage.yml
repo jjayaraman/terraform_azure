@@ -34,7 +34,7 @@ env:
 
 jobs:
   storage-terraform:
-    name: 'Terraform'
+    name: 'storage-terraform'
     runs-on: ubuntu-latest
     environment: ${{ github.event.inputs.environment || 'dev' }}
     defaults:
