@@ -10,10 +10,10 @@ resource "azurerm_storage_account" "fa_storage" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
-  # network_rules {
-  #   default_action = "Deny"            # Deny all traffic except allowed IPs
-  #   bypass         = ["AzureServices"] # Allows Azure services to access  
-  # }
+  network_rules {
+    default_action = "Allow"           # Deny all traffic except allowed IPs
+    bypass         = ["AzureServices"] # Allows Azure services to access  
+  }
 }
 
 resource "azurerm_service_plan" "fa_service_plan" {
