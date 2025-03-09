@@ -45,9 +45,9 @@ resource "azurerm_linux_function_app" "function_app" {
     WEBSITE_NODE_DEFAULT_VERSION = "~18"
   }
 
-  # identity {
-  #   type = "SystemAssigned" # Managed Identity
-  # }
+  identity {
+    type = "SystemAssigned" # Managed Identity
+  }
 }
 
 # 🔹 Assign Storage Blob Data Contributor access to Function app
