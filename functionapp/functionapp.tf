@@ -15,7 +15,7 @@ resource "azurerm_service_plan" "fa_service_plan" {
   name                = "asp-${var.functionapp_name}-${var.environment}"
   resource_group_name = azurerm_resource_group.fa_rg.name
   location            = azurerm_resource_group.fa_rg.location
-  os_type             = "linux"
+  os_type             = "Linux"
   sku_name            = "EP1" # Elastic Premium Plan (Flex Consumption)
 }
 
