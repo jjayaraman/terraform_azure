@@ -1,13 +1,7 @@
-name: 'storage'
+# Workflow to destroy functionapp
+name: 'functionapp-destroy'
 
 on:
-  pull_request:
-    paths:
-      - storage/** # Trigger on PR to main branch (PR validation)
-  push:
-    paths:
-      - storage/** # Trigger on push to main after PR merge (Terraform apply)
-
   workflow_dispatch:
     inputs:
       environment:
@@ -17,8 +11,8 @@ on:
         type: choice
         options:
           - dev
-          # - sit
-          # - uat
+          - sit
+          - uat
 
 permissions:
   id-token: write
@@ -26,24 +20,28 @@ permissions:
 
 env:
   TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-  DEPLOY_ENV: ${{ github.event.inputs.environment || 'dev' }} # Default to dev for push
+  DEPLOY_ENV: ${{ github.event.inputs.environment }}
   BC_resource_group: terraform_rg # TF state backend storage resource group name
   BC_storage_account_name: sttfstate2025dev # TF state backend storage account name
 
 jobs:
-  storage-terraform:
-    name: 'Terraform'
+  terraform-destroy:
+    name: 'Terraform Destroy'
     runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.environment || 'dev' }}
+    environment: ${{ github.event.inputs.environment }}
     defaults:
       run:
         shell: bash
-        working-directory: storage # Set the working directory for all steps
+        working-directory: functionapp # Set the working directory for all steps
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+
+      # Azure Login
       - name: Azure Login
         uses: azure/login@v2
         with:
@@ -55,11 +53,11 @@ jobs:
           environment: azurecloud
           audience: api://AzureADTokenExchange
 
+      # Set Azure subscription
       - name: Set Azure Subscription
-        run: az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
+        run: |
+          echo "Set Azure Subscription"
+          az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Terraform Init
         run: |
@@ -68,14 +66,14 @@ jobs:
             -backend-config="resource_group_name=${{ env.BC_resource_group }}" \
             -backend-config="storage_account_name=${{ env.BC_storage_account_name }}" \
             -backend-config="container_name=tfstate" \
-            -backend-config="key=${{ github.workflow }}-${{ env.DEPLOY_ENV }}-terraform.tfstate"
-
-      - name: Terraform Format
-        run: terraform fmt -check
+            -backend-config="key=functionapp-${{ env.DEPLOY_ENV }}-terraform.tfstate"
 
       - name: Terraform Plan
-        run: terraform plan -var-file=${{ env.DEPLOY_ENV }}.tfvars -input=false
+        run: |
+          echo "Terraform plan for ${{ env.DEPLOY_ENV }}"
+          terraform plan -var-file=${{ env.DEPLOY_ENV }}.tfvars -input=false
 
-      - name: Terraform Apply
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: terraform apply -var-file=${{ env.DEPLOY_ENV }}.tfvars -auto-approve -input=false
+      - name: Terraform Destroy
+        run: |
+          echo "Terraform destroy for ${{ env.DEPLOY_ENV }}"
+          terraform destroy -var-file=${{ env.DEPLOY_ENV }}.tfvars -auto-approve -input=false

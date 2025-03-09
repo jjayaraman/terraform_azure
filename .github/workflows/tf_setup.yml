@@ -33,6 +33,11 @@ jobs:
     name: 'Terraform'
     runs-on: ubuntu-latest
     environment: ${{ github.event.inputs.environment || 'dev' }}
+    defaults:
+      run:
+        shell: bash
+        working-directory: tf_setup # Set the working directory for all steps
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -56,13 +61,10 @@ jobs:
 
       - name: Terraform Init
         run: terraform init -upgrade
-        working-directory: ./tf_setup
 
       - name: Terraform Plan
-        working-directory: ./tf_setup
         run: terraform plan -var-file=${{ env.DEPLOY_ENV }}.tfvars -input=false
 
       - name: Terraform Apply
         # if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: terraform apply -var-file=${{ env.DEPLOY_ENV }}.tfvars -auto-approve -input=false
-        working-directory: ./tf_setup
