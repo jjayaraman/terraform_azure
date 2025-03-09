@@ -39,7 +39,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: functionapp1 # Set the working directory for all steps
+        working-directory: functionapp # Set the working directory for all steps
 
     steps:
       - name: Checkout
