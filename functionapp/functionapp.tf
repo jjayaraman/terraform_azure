@@ -34,7 +34,7 @@ resource "azurerm_windows_function_app" "function_app" {
   site_config {
     always_on = false
     application_stack {
-      node_version = "18" # Node.js version
+      node_version = "~22" # Node.js version
     }
   }
 
