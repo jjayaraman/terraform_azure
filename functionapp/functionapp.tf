@@ -20,7 +20,7 @@ resource "azurerm_service_plan" "fa_service_plan" {
   name                = "asp-${var.functionapp_name}-${var.environment}"
   resource_group_name = azurerm_resource_group.fa_rg.name
   location            = azurerm_resource_group.fa_rg.location
-  os_type             = "Linux"
+  os_type             = "Windows"
   sku_name            = "Y1" # Consumption plan
 }
 
@@ -34,15 +34,12 @@ resource "azurerm_linux_function_app" "function_app" {
   site_config {
     always_on = false # Recommended for Flex Consumption
     application_stack {
-      python_version = "3.9"
+      node_version = "18" # Node.js version
     }
   }
 
   app_settings = {
-    FUNCTIONS_WORKER_RUNTIME     = "python"
-    WEBSITE_RUN_FROM_PACKAGE     = "1"
-    FUNCTION_APP_EDIT_MODE       = "readonly"
-    WEBSITE_NODE_DEFAULT_VERSION = "~18"
+
   }
 
   identity {
