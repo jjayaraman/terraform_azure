@@ -35,7 +35,7 @@ env:
 
 jobs:
   functionapp-terraform:
-    name: 'Terraform'
+    name: 'functionapp-terraform'
     runs-on: ubuntu-latest
     environment: ${{ github.event.inputs.environment || 'dev' }}
     defaults:
