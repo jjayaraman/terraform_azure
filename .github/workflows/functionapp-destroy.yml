@@ -2,6 +2,9 @@
 name: 'functionapp-destroy'
 
 on:
+  schedule:
+    - cron: '0 0 * * 0' # Runs at 00:00 (midnight) every Sunday
+
   workflow_dispatch:
     inputs:
       environment:
