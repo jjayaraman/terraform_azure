@@ -27,8 +27,7 @@ resource "azurerm_linux_function_app" "function_app" {
   storage_account_name = azurerm_storage_account.fa_storage.name
 
   site_config {
-    linux_fx_version = "Python|3.9"
-    always_on        = false # Recommended for Flex Consumption
+    always_on = false # Recommended for Flex Consumption
     application_stack {
       python_version = "3.9"
     }
