@@ -52,6 +52,7 @@ resource "azurerm_role_assignment" "function_app_fa_storage_access" {
   principal_id         = azurerm_windows_function_app.function_app.identity[0].principal_id
   scope                = azurerm_storage_account.fa_storage.id
   role_definition_name = "Storage Blob Data Contributor"
+  depends_on           = [azurerm_windows_function_app.function_app]
 }
 
 # 🔹 Output Function App URL
