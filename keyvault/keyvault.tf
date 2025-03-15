@@ -6,7 +6,7 @@ resource "azurerm_resource_group" "kv_rg" {
 data "azurerm_client_config" "current" {}
 
 resource "azurerm_key_vault" "kv" {
-  name                            = "${var.keyvault_name_prefix}_${var.environment}"
+  name                            = "${var.keyvault_name_prefix}-${var.environment}"
   resource_group_name             = azurerm_resource_group.kv_rg.name
   location                        = azurerm_resource_group.kv_rg.location
   sku_name                        = "standard"
