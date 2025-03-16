@@ -23,7 +23,7 @@ permissions:
 
 env:
   TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-  DEPLOY_ENV: ${{ github.event.inputs.environment }}
+  DEPLOY_ENV: ${{ github.event.inputs.environment || 'dev' }}
   BC_resource_group: terraform_rg # TF state backend storage resource group name
   BC_storage_account_name: sttfstate2025dev # TF state backend storage account name
 
@@ -31,13 +31,17 @@ jobs:
   terraform-destroy:
     name: 'Terraform Destroy'
     runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.environment }}
+    environment: ${{ github.event.inputs.environment || 'dev' }}
     defaults:
       run:
         shell: bash
         working-directory: storage # Set the working directory for all steps
 
     steps:
+      - name: Debug Trigger Source
+        run: |
+          echo "Workflow triggered by: ${{ github.event_name }}"
+
       - name: Checkout
         uses: actions/checkout@v4
 
