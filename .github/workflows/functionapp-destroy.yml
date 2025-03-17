@@ -79,8 +79,10 @@ jobs:
         run: |
           echo "Terraform plan for ${{ env.DEPLOY_ENV }}"
           terraform plan -var-file=${{ env.DEPLOY_ENV }}.tfvars -input=false
+        working-directory: functionapp
 
       - name: Terraform Destroy
         run: |
           echo "Terraform destroy for ${{ env.DEPLOY_ENV }}"
           terraform destroy -var-file=${{ env.DEPLOY_ENV }}.tfvars -auto-approve -input=false
+        working-directory: functionapp
